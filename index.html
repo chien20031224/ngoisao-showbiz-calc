@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ngôi Sao Showbiz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #d63384;   
+            --primary-light: #fce4ec; 
+            --glass: rgba(255, 255, 255, 0.95);
+            --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+            --border: 1px solid rgba(255, 255, 255, 0.5);
+            --text-main: #444;
+            --success: #198754;
+            --danger: #dc3545;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            box-shadow: var(--shadow);
+            border: var(--border);
+            padding: 40px;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 40px;
+            font-weight: 700;
+            font-size: 2rem;
+        }
+
+        h2 {
+            color: #555;
+            font-size: 1.1rem;
+            border-left: 5px solid var(--primary);
+            padding-left: 15px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .section-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 5px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #666;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: 'Quicksand', sans-serif;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+            background: #fff;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(214, 51, 132, 0.1);
+        }
+
+        .btn-calc {
+            display: block;
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(45deg, #d63384, #ff6b6b);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 40px;
+            font-family: 'Quicksand', sans-serif;
+            box-shadow: 0 10px 20px rgba(214, 51, 132, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-calc:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 25px rgba(214, 51, 132, 0.4);
+        }
+
+        /* Result Styles */
+        .result-box {
+            display: none;
+            margin-top: 40px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            text-align: center;
+            border: 1px solid #f0f0f0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+        }
+
+        .summary-card.highlight-card {
+            background: var(--primary-light);
+            border: 1px solid #f8bbd0;
+        }
+
+        .summary-card h3 {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #888;
+            font-weight: 600;
+        }
+
+        .summary-card p {
+            margin: 10px 0 0;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .summary-card .sub-text {
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: 5px;
+            font-weight: 500;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 15px;
+            font-size: 0.95rem;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #eee;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            color: var(--primary);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .highlight-val {
+            color: var(--primary);
+            font-weight: 700;
+        }
+        
+        .note {
+            font-style: italic;
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            background: #fff3cd;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ffeeba;
+        }
+
+        @media (max-width: 600px) {
+            .section-grid { grid-template-columns: 1fr; }
+            .container { padding: 20px; }
+            .summary-card p { font-size: 1.4rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Công Cụ Tính Toán Phí Ngôi Sao Showbiz</h1>
+
+    <h2>1. Tài nguyên ban đầu</h2>
+    <div class="section-grid">
+        <div class="form-group">
+            <label>Số ngày sự kiện</label>
+            <select id="eventDays">
+                <option value="7">7 Ngày</option>
+                <option value="14">14 Ngày</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Số xu ban đầu</label>
+            <input type="number" id="initialCoins" value="0" min="0" placeholder="VD: 500">
+        </div>
+        <div class="form-group">
+            <label>Số xu nhận từ đăng nhập/ngày</label>
+            <input type="number" id="loginCoins" placeholder="VD: 200" min="0">
+        </div>
+        <div class="form-group">
+            <label>Tổng số xu nhận từ nhiệm vụ/ngày</label>
+            <input type="number" id="taskCoins" placeholder="VD: 240" min="0">
+        </div>
+        <div class="form-group">
+            <label>Số phiếu giảm giá có thể có</label>
+            <input type="number" id="currentCoupons" value="0" min="0">
+        </div>
+    </div>
+
+    <h2>2. Bộ đồ Nữ</h2>
+    <div class="note">(Nhập giá xu món đồ muốn mua, nếu không mua thì để trống)</div>
+    <div class="section-grid">
+        <div class="form-group"><label>Tóc</label><input type="number" class="item-female" data-name="Tóc" value="0"></div>
+        <div class="form-group"><label>Trang điểm</label><input type="number" class="item-female" data-name="Trang điểm" value="0"></div>
+        <div class="form-group"><label>Áo</label><input type="number" class="item-female" data-name="Áo" value="0"></div>
+        <div class="form-group"><label>Váy</label><input type="number" class="item-female" data-name="Váy" value="0"></div>
+        <div class="form-group"><label>Đầm</label><input type="number" class="item-female" data-name="Đầm" value="0"></div>
+        <div class="form-group"><label>Đầu</label><input type="number" class="item-female" data-name="Đầu" value="0"></div>
+        <div class="form-group"><label>Vòng cổ</label><input type="number" class="item-female" data-name="Vòng cổ" value="0"></div>
+        <div class="form-group"><label>Khuyên tai</label><input type="number" class="item-female" data-name="Khuyên tai" value="0"></div>
+        <div class="form-group"><label>Đeo tay</label><input type="number" class="item-female" data-name="Đeo tay" value="0"></div>
+        <div class="form-group"><label>Cầm tay</label><input type="number" class="item-female" data-name="Cầm tay" value="0"></div>
+        <div class="form-group"><label>Tất</label><input type="number" class="item-female" data-name="Tất" value="0"></div>
+        <div class="form-group"><label>Giày</label><input type="number" class="item-female" data-name="Giày" value="0"></div>
+    </div>
+
+    <h2>3. Các món tùy chọn khác</h2>
+    <div class="note">(Nhập giá xu món đồ muốn mua, nếu không mua thì để trống)</div>
+    <div class="section-grid">
+        <div class="form-group"><label>Mèo 5 sao</label><input type="number" class="item-other" data-name="Mèo 5 sao" value="0"></div>
+        <div class="form-group"><label>Gói quà nhỏ</label><input type="number" class="item-other" data-name="Gói quà nhỏ" value="0"></div>
+        <div class="form-group"><label>Gói quà vừa</label><input type="number" class="item-other" data-name="Gói quà vừa" value="0"></div>
+        <div class="form-group"><label>Gói quà lớn</label><input type="number" class="item-other" data-name="Gói quà lớn" value="0"></div>
+        <div class="form-group"><label>Cúp bạc</label><input type="number" class="item-other" data-name="Cúp bạc" value="0"></div>
+    </div>
+
+    <h2>4. Bộ đồ Nam</h2>
+    <div class="note">(Nhập giá xu 1 mảnh và số bộ muốn mua. 1 bộ = 12 mảnh)</div>
+    <div class="section-grid">
+        <div class="form-group">
+            <label>Giá 1 mảnh</label>
+            <input type="number" id="maleShardPrice" value="0">
+        </div>
+        <div class="form-group">
+            <label>Số bộ muốn mua (0-4)</label>
+            <input type="number" id="maleSets" value="0" max="4" min="0">
+        </div>
+    </div>
+
+    <h2>5. Gói Nạp (Số lượng)</h2>
+    <div class="note">(Nhập số lượng nạp của từng gói, nếu không mua thì để trống)</div>
+    <div class="section-grid">
+        <div class="form-group"><label>Gói 1 (50 xu)</label><input type="number" class="pack-input" data-coins="50" data-coupons="0" value="0"></div>
+        <div class="form-group"><label>Gói 2 (220 xu, 1 phiếu)</label><input type="number" class="pack-input" data-coins="220" data-coupons="1" value="0"></div>
+        <div class="form-group"><label>Gói 3 (520 xu, 2 phiếu)</label><input type="number" class="pack-input" data-coins="520" data-coupons="2" value="0"></div>
+        <div class="form-group"><label>Gói 4 (750 xu, 3 phiếu)</label><input type="number" class="pack-input" data-coins="750" data-coupons="3" value="0"></div>
+        <div class="form-group"><label>Gói 5 (1500 xu, 4 phiếu)</label><input type="number" class="pack-input" data-coins="1500" data-coupons="4" value="0"></div>
+        <div class="form-group"><label>Gói 6 (2500 xu, 5 phiếu)</label><input type="number" class="pack-input" data-coins="2500" data-coupons="5" value="0"></div>
+        <div class="form-group"><label>Gói 7 (5000 xu, 8 phiếu)</label><input type="number" class="pack-input" data-coins="5000" data-coupons="8" value="0"></div>
+    </div>
+
+    <button class="btn-calc" onclick="calculate()">TÍNH TOÁN CHI PHÍ</button>
+
+    <div id="result" class="result-box">
+        <h2>Kết Quả Tính Toán</h2>
+        
+        <div class="result-summary-grid">
+            <div class="summary-card">
+                <h3>Tổng số xu cần (Giá gốc)</h3>
+                <p id="resOriginalCost">0</p>
+            </div>
+            <div class="summary-card highlight-card">
+                <h3>Tổng số xu cần (Giá giảm)</h3>
+                <p id="resFinalCost">0</p>
+            </div>
+            <div class="summary-card">
+                <h3>Số xu tiết kiệm được</h3>
+                <p id="resSavedCoins" style="color: var(--success)">0</p>
+            </div>
+            <div class="summary-card">
+                <h3>Tổng phiếu giảm giá</h3>
+                <p id="resTotalCoupons">0</p>
+            </div>
+             <div class="summary-card">
+                <h3>Số xu cần mua thêm</h3>
+                <p id="resCoinsToBuy" style="color: #e74c3c">0</p>
+                <div class="sub-text">(Đã trừ xu free & nạp)</div>
+            </div>
+            <div class="summary-card highlight-card">
+                <h3>Số kim Cương cần dùng</h3>
+                <p id="resTotalDiamonds">0</p>
+            </div>
+             <div class="summary-card">
+                <h3>Số xu dư</h3>
+                <p id="resFinalExcess" style="color: #666">0</p>
+            </div>
+        </div>
+
+        <h3>Gợi ý mua xu</h3>
+        <p class="note">Thực hiện theo gợi ý sẽ giúp giảm số xu dư thừa cuối cùng</p>
+        <table id="buyStrategyTable">
+            <thead>
+                <tr>
+                    <th width="30%">Gói Mua</th>
+                    <th>Chi tiết thực hiện</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <h3 style="margin-top: 30px;">Chi tiết sử dụng Phiếu giảm giá</h3>
+        <table id="couponTable">
+            <thead>
+                <tr>
+                    <th>Tên món</th>
+                    <th>Giá gốc</th>
+                    <th>Giá sau giảm (22%)</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function calculate() {
+        // --- 1. LẤY DỮ LIỆU ---
+        const n = parseInt(document.getElementById('eventDays').value);
+        const initialCoins = parseInt(document.getElementById('initialCoins').value) || 0;
+        const loginCoins = parseInt(document.getElementById('loginCoins').value) || 0;
+        const taskCoins = parseInt(document.getElementById('taskCoins').value) || 0;
+        let availableCoupons = parseInt(document.getElementById('currentCoupons').value) || 0;
+
+        // Tính nguồn từ gói nạp
+        let topUpCoins = 0;
+        let topUpCoupons = 0;
+        document.querySelectorAll('.pack-input').forEach(input => {
+            const qty = parseInt(input.value) || 0;
+            topUpCoins += qty * parseInt(input.dataset.coins);
+            topUpCoupons += qty * parseInt(input.dataset.coupons);
+        });
+
+        const totalCoupons = availableCoupons + topUpCoupons;
+
+        // --- 2. TỔNG HỢP ITEMS ---
+        let items = [];
+        // Đồ lẻ
+        document.querySelectorAll('.item-female, .item-other').forEach(inp => {
+            const price = parseInt(inp.value) || 0;
+            if (price > 0) items.push({ name: inp.dataset.name, price: price });
+        });
+        // Đồ bộ nam
+        const maleShardPrice = parseInt(document.getElementById('maleShardPrice').value) || 0;
+        const maleSets = parseInt(document.getElementById('maleSets').value) || 0;
+        const totalShards = maleSets * 12;
+        for (let i = 0; i < totalShards; i++) {
+            items.push({ name: `Mảnh Nam (${Math.floor(i/12) + 1})`, price: maleShardPrice });
+        }
+
+        // --- 3. XỬ LÝ GIẢM GIÁ ---
+        // Sắp xếp giá giảm dần để tối ưu coupon
+        items.sort((a, b) => b.price - a.price);
+
+        let originalCost = 0;
+        let finalCost = 0;
+        let couponsUsed = 0;
+        let couponDetails = [];
+
+        items.forEach((item, index) => {
+            originalCost += item.price; // Tổng giá gốc
+            
+            if (index < totalCoupons) {
+                // Có coupon
+                const reducedPrice = Math.floor(item.price * 0.78); // Giảm 22%
+                finalCost += reducedPrice;
+                couponsUsed++;
+                couponDetails.push({
+                    name: item.name,
+                    original: item.price,
+                    final: reducedPrice
+                });
+            } else {
+                // Không coupon
+                finalCost += item.price;
+            }
+        });
+
+        const savedCoins = originalCost - finalCost;
+
+        // --- 4. THUẬT TOÁN MUA TỐI ƯU (NEW) ---
+        const freeCoins = (loginCoins + taskCoins) * n;
+        const totalAvailableBeforeDiamonds = initialCoins + freeCoins + topUpCoins;
+        
+        let coinsNeeded = Math.max(0, finalCost - totalAvailableBeforeDiamonds);
+        const initialCoinsNeeded = coinsNeeded; 
+
+        // Định nghĩa các gói
+        const packs = [
+            { id: 1, cost: 10, yield: 12, maxDaily: (n===7 ? 20 : 10) },
+            { id: 2, cost: 30, yield: 32, maxDaily: (n===7 ? 20 : 10) },
+            { id: 3, cost: 60, yield: 60, maxDaily: (n===7 ? 20 : 10) },
+            { id: 4, cost: 100, yield: 80, maxDaily: Infinity }
+        ];
+
+        // Tính giới hạn tổng (Total Limit)
+        const limits = packs.map(p => (p.maxDaily === Infinity) ? Infinity : p.maxDaily * n);
+
+        // --- OPTIMIZATION SOLVER ---
+        // Chiến thuật: 
+        // 1. Tính cấu hình Greedy (Ưu tiên gói 1 -> 2 -> 3 -> 4) để làm mốc chuẩn.
+        // 2. Thử giảm bớt gói 1, gói 2, gói 3 (Backtracking) xem có giúp gói 4 (hoặc gói cao hơn)
+        //    lấp đầy khoảng trống hiệu quả hơn không.
+
+        function getGreedyCounts(target, limitsArr) {
+            let counts = [0, 0, 0, 0];
+            let remaining = target;
+            for(let i=0; i<4; i++) {
+                if (remaining <= 0) break;
+                let take = Math.ceil(remaining / packs[i].yield);
+                if (take > limitsArr[i]) take = limitsArr[i];
+                counts[i] = take;
+                remaining -= take * packs[i].yield;
+            }
+            // Nếu vẫn thiếu (sau khi max hết 3 gói đầu), dồn vào gói 4
+            if (remaining > 0) {
+                 counts[3] += Math.ceil(remaining / packs[3].yield);
+            }
+            return counts;
+        }
+
+        function calculateCost(counts) {
+            return counts[0]*10 + counts[1]*30 + counts[2]*60 + counts[3]*100;
+        }
+
+        function calculateTotalYield(counts) {
+            return counts[0]*12 + counts[1]*32 + counts[2]*60 + counts[3]*80;
+        }
+
+        // Bước 1: Lấy cấu hình Greedy chuẩn
+        let bestCounts = getGreedyCounts(coinsNeeded, limits);
+        let minDiamondCost = calculateCost(bestCounts);
+
+        // Bước 2: Tinh chỉnh (Loop optimization)
+        // Chúng ta thử giảm số lượng gói 1, 2, 3 đi một chút (lookback) 
+        // để xem gói lớn hơn có cover rẻ hơn không.
+        // Phạm vi loop: Giảm tối đa 8 gói (đủ để cover khoảng 100 xu - tương đương 1 gói lớn)
+        
+        const g = bestCounts; // Greedy counts gốc
+        const lookback1 = Math.min(g[0], 8); 
+        const lookback2 = Math.min(g[1], 4); 
+        const lookback3 = Math.min(g[2], 2);
+
+        for (let i = 0; i <= lookback1; i++) {
+            for (let j = 0; j <= lookback2; j++) {
+                for (let k = 0; k <= lookback3; k++) {
+                    // Cấu hình thử nghiệm: Giảm số lượng gói nhỏ
+                    let c0 = g[0] - i;
+                    let c1 = g[1] - j;
+                    let c2 = g[2] - k;
+                    
+                    // Tính số xu hiện có từ 3 gói này
+                    let currentSum = c0*12 + c1*32 + c2*60;
+                    let remain = coinsNeeded - currentSum;
+                    
+                    let c3 = 0;
+                    if (remain > 0) {
+                        c3 = Math.ceil(remain / 80); // Gói 4
+                    }
+                    
+                    let currentCounts = [c0, c1, c2, c3];
+                    let currentCost = calculateCost(currentCounts);
+                    
+                    // So sánh: Nếu rẻ hơn, hoặc bằng giá nhưng ít gói lẻ hơn (ưu tiên gọn)
+                    if (currentCost < minDiamondCost) {
+                        minDiamondCost = currentCost;
+                        bestCounts = currentCounts;
+                    }
+                }
+            }
+        }
+        
+        // --- 5. HIỂN THỊ KẾT QUẢ ---
+        const totalCoinsBought = calculateTotalYield(bestCounts);
+        const finalExcess = (totalAvailableBeforeDiamonds + totalCoinsBought) - finalCost;
+
+        const fmt = (num) => num.toLocaleString('vi-VN');
+
+        document.getElementById('resOriginalCost').innerText = fmt(originalCost);
+        document.getElementById('resFinalCost').innerText = fmt(finalCost);
+        document.getElementById('resSavedCoins').innerText = fmt(savedCoins);
+        document.getElementById('resTotalCoupons').innerText = couponsUsed + " / " + totalCoupons;
+        document.getElementById('resCoinsToBuy').innerText = fmt(initialCoinsNeeded);
+        document.getElementById('resTotalDiamonds').innerText = fmt(minDiamondCost);
+        document.getElementById('resFinalExcess').innerText = fmt(finalExcess);
+
+        // Render Coupon Table
+        const couponBody = document.querySelector('#couponTable tbody');
+        couponBody.innerHTML = '';
+        if (couponDetails.length === 0) {
+            couponBody.innerHTML = '<tr><td colspan="3" style="text-align:center">Chưa dùng phiếu giảm giá nào</td></tr>';
+        } else {
+            couponDetails.forEach(c => {
+                couponBody.innerHTML += `
+                    <tr>
+                        <td>${c.name}</td>
+                        <td>${fmt(c.original)}</td>
+                        <td class="highlight-val">${fmt(c.final)}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        // Render Strategy Table (Gom gọn)
+        const stratBody = document.querySelector('#buyStrategyTable tbody');
+        stratBody.innerHTML = '';
+        
+        let strategyFound = false;
+        
+        bestCounts.forEach((count, idx) => {
+            if (count > 0) {
+                strategyFound = true;
+                const pack = packs[idx];
+                let detailText = "";
+                
+                if (pack.maxDaily === Infinity) {
+                    detailText = `Mua tổng cộng <b>${count} lần</b> (Gói này không giới hạn ngày).`;
+                } else {
+                    // Logic gom gọn: Mua Max những ngày đầu
+                    const limit = pack.maxDaily;
+                    const fullDays = Math.floor(count / limit);
+                    const remainder = count % limit;
+                    
+                    let parts = [];
+                    if (fullDays > 0) {
+                        parts.push(`<b>${fullDays} ngày đầu</b>: Mua max <b>${limit} lần/ngày</b>`);
+                    }
+                    if (remainder > 0) {
+                        const dayLabel = (fullDays > 0) ? `Ngày thứ ${fullDays + 1}` : "1 ngày bất kỳ";
+                        parts.push(`<b>${dayLabel}</b>: Mua <b>${remainder} lần</b>`);
+                    }
+                    detailText = parts.join(". ") + ".";
+                }
+
+                stratBody.innerHTML += `
+                    <tr>
+                        <td style="font-weight:bold">Mốc ${pack.cost} KC (${pack.yield} xu)</td>
+                        <td>${detailText}</td>
+                    </tr>
+                `;
+            }
+        });
+
+        if (!strategyFound) {
+            stratBody.innerHTML = '<tr><td colspan="2" style="text-align:center; color: var(--success)">Đã đủ xu, không cần mua thêm!</td></tr>';
+        }
+
+        document.getElementById('result').style.display = 'block';
+        document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+    }
+</script>
+
+</body>
+</html>
